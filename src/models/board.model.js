@@ -24,9 +24,9 @@ const createNew = async (data) => {
       .collection(boardCollectionName)
       .insertOne(value);
 
-    console.log(result);
+    return result;
   } catch (error) {
-    console.log(error);
+    throw new Error(error);
   }
 };
 

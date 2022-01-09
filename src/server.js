@@ -1,8 +1,11 @@
 import express from "express";
 import { connectMongoDB } from "*/config/mongodb";
+import { env } from "*/config/environment";
+import { apiV1 } from "*/routes/v1";
+import cors from "cors";
 
-const PORT = process.env.PORT || 4000;
-const HOSTNAME = process.env.HOSTNAME || "localhost";
+const PORT = env.PORT || 4000;
+const HOSTNAME = env.HOSTNAME || "localhost";
 
 connectMongoDB()
   .then(() => console.log("Connected successfully"))
@@ -15,9 +18,11 @@ connectMongoDB()
 const startServer = () => {
   const app = express();
 
-  app.get("/", async (req, res) => {
-    res.end("<h1>Hello World!</h1>");
-  });
+  app.use(express.json());
+
+  app.use(cors());
+
+  app.use("/v1", apiV1);
 
   app.listen(PORT, HOSTNAME, () => {
     console.log(`Running at port ${HOSTNAME}:${PORT}`);
