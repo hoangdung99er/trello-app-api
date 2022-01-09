@@ -1,10 +1,12 @@
 import express from "express";
-import { abc } from "*/utils";
+import { connectMongoDB } from "*/config/mongodb";
 
 const app = express();
 
 const PORT = process.env.PORT || 4000;
 const HOSTNAME = process.env.HOSTNAME || "localhost";
+
+connectMongoDB().catch(console.log);
 
 app.get("/", (req, res) => {
   res.end("<h1>Hello World!</h1>");
