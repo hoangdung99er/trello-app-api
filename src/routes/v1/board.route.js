@@ -4,9 +4,6 @@ import { BoardValidation } from "*/validations/board.validation";
 
 const router = express.Router();
 
-router
-  .route("/get")
-  .get(BoardController.createNew)
-  .post(BoardValidation.createNew, BoardController.createNew);
+router.route("/").post(BoardValidation.createNew, BoardController.createNew);
 
 export const BoardRoute = router;
