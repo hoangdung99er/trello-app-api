@@ -1,6 +1,8 @@
 import { MongoClient } from "mongodb";
 import { env } from "*/config/environment";
 
+let dbInstance = null;
+
 const uri = env.MONGODB_URI;
 
 const client = new MongoClient(uri, {
@@ -9,20 +11,20 @@ const client = new MongoClient(uri, {
 });
 
 export const connectMongoDB = async () => {
-  try {
-    await client.connect();
-
-    console.log("Connected DB successfully");
-
-    await listDatabases();
-  } finally {
-    // Close connection
-    await client.close();
-  }
+  await client.connect();
+  // Assign clientDB to our dbInstance
+  dbInstance = client.db(env.DB_NAME);
 };
 
-const listDatabases = async () => {
-  const databaseList = await client.db().admin().listDatabases();
+// const listDatabases = async () => {
+//   const databaseList = await client.db().admin().listDatabases();
 
-  databaseList.databases.forEach((db) => console.log(` - ${db.name}`));
+//   databaseList.databases.forEach((db) => console.log(` - ${db.name}`));
+// };
+
+// Get database Instance
+export const getDB = () => {
+  if (!dbInstance) throw new Error("Connection failed!");
+
+  return dbInstance;
 };
