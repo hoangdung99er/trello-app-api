@@ -14,6 +14,10 @@ const getFullBoard = async (boardId) => {
   try {
     const newBoard = await BoardModel.getFullBoard(boardId);
 
+    if (!newBoard || !newBoard.columns) {
+      throw new Error("Board not found!");
+    }
+
     newBoard.columns.forEach((column) => {
       column.cards = newBoard.cards.filter(
         (c) => c.columnId.toString() === column._id.toString()
