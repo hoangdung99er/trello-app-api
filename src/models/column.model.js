@@ -20,15 +20,55 @@ const validationSchema = async (data) => {
   });
 };
 
+const findColumn = async (columnId) => {
+  try {
+    const result = await getDB()
+      .collection(columnCollectionName)
+      .findOne({ _id: new ObjectId(columnId) });
+
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const createNew = async (data) => {
   try {
     const value = await validationSchema(data);
+    const insertValue = {
+      ...value,
+      boardId: new ObjectId(value.boardId),
+    };
 
     const result = await getDB()
       .collection(columnCollectionName)
-      .insertOne(value);
+      .insertOne(insertValue);
 
     return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const pushCardOrder = async (columnId, cardId) => {
+  try {
+    const result = await getDB()
+      .collection(columnCollectionName)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(columnId),
+        },
+        {
+          $push: {
+            cardOrder: new ObjectId(cardId),
+          },
+        },
+        {
+          returnDocument: "after",
+        }
+      );
+
+    return result.value;
   } catch (error) {
     throw new Error(error);
   }
@@ -46,7 +86,6 @@ const update = async (id, data) => {
         { returnDocument: "after" }
       );
 
-    console.log(result.value);
     return result.value;
   } catch (error) {
     throw new Error(error);
@@ -56,4 +95,7 @@ const update = async (id, data) => {
 export const ColumnModel = {
   createNew,
   update,
+  findColumn,
+  pushCardOrder,
+  columnCollectionName,
 };

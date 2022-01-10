@@ -1,9 +1,23 @@
 import { ColumnModel } from "*/models/column.model";
+import { BoardModel } from "*/models/board.model";
 
 const createNew = async (data) => {
   try {
-    const result = await ColumnModel.createNew(data);
-    return result;
+    // transaction
+    // if one doesn work , the rest will return
+    const newColumn = await ColumnModel.createNew(data);
+
+    const findColumn = await ColumnModel.findColumn(
+      newColumn.insertedId.toString()
+    );
+
+    // Update columnOrder
+    await BoardModel.pushColumnOrder(
+      findColumn.boardId.toString(),
+      findColumn._id.toString()
+    );
+
+    return newColumn;
   } catch (error) {
     throw new Error(error);
   }
